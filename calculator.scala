@@ -1,9 +1,8 @@
+import scala.util.boundary, boundary.break
+
 /** Software implementation of PROC (PROstoy Calculator) mk. 1 (or mk. 2).
-  *
-  * You should finish this procedure according to
-  * the reference described in `README.md` to complete
-  * the assignment.
   */
+
 @main def calculator(commands: String*): Unit = {
   /** Converts given string `s` to integer.
     *
@@ -12,13 +11,51 @@
     */
   def parseInt(s: String): Int = s.toInt
 
-  /** Representation of `acc` register. */
   var acc: Int = 0
-  // define additional registers here
+  var a: Int = 0
+  var b: Int = 0
+  var blink: Boolean = false
 
-  for (c <- commands) {
-    // implement your calculator's logic here
+  val result = boundary[Int] {
+    for (c <- commands) {
+      c match {
+        case "+" =>
+          acc = a + b
+          blink = false
+        case "-" =>
+          acc = a - b
+          blink = false
+        case "`*" =>
+          acc = a * b
+          blink = false
+        case "/" =>
+          if (b == 0) {
+            acc = 0
+            a = 0
+            b = 0
+          } else {
+            acc = a / b
+         }
+          blink = false
+        case "swap" =>
+          var tmp = a
+          a = b
+          b = tmp
+        case "blink" =>
+          blink = !blink
+        case "acc" =>
+          if (blink) b = acc else a = acc 
+          blink = !blink 
+        case "break" =>
+          break(acc)
+        case _ =>
+          val x = parseInt(c)
+          if (blink) b = x else a = x
+          blink = !blink
+      }
+    }
+    acc
   }
 
-  println(acc)
+  println(result)
 }
